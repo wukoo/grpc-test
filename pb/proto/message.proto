@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "grpc-home/pb/protogo";
+
+service MessageRPC {
+  rpc MessageChat(stream Message) returns(stream Message) {};
+}
+
+message Message {
+  string msg = 1;
+}

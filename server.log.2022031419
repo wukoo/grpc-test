@@ -1,0 +1,3 @@
+2022-03-14 19:55:18.051	[INFO]	server	got a new stream, index: 2
+2022-03-14 19:55:18.052	[INFO]	server	stream 2 start sending goroutine
+2022-03-14 19:55:18.052	[INFO]	server	stream 2 start receiving cdm message

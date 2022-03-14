@@ -1,0 +1,3 @@
+2022-03-14 19:55:18.049	[INFO]	client1	start message client
+2022-03-14 19:55:18.063	[INFO]	client1	start sending goroutine
+2022-03-14 19:55:18.063	[INFO]	client1	start receiving client message 
