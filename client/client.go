@@ -150,7 +150,7 @@ func (c *MsgClient) StartTwoDirectionClient() bool {
 	size := sendTimes * msg.Size() / 1000000
 	sec := int(time.Since(startTime).Seconds())
 
-	c.logger.Infof("finish sending %d messages in time: %ds, total size: %dMB, messages per sec: %d, "+
+	c.logger.Infof("finish tow direction %d messages in time: %ds, total size: %dMB, messages per sec: %d, "+
 		"speed: %dMB/s, tcpFlag: %v", sendTimes, sec, size, sendTimes/sec, size/sec, tcpFlag)
 
 	return true
