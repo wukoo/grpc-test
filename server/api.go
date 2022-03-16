@@ -37,8 +37,8 @@ func (a *API) MessageTwoDirection(server protogo.MessageRPC_MessageTwoDirectionS
 	a.wg.Wait()
 
 	//size := recvCount * message.MakeOneBMessage().Size() / 1000000
-	//size := recvCount * message.MakeOneKBMessage().Size() / 1000000
-	size := recvCount * message.MakeFourKBMessage().Size() / 1000000
+	size := recvCount * message.MakeOneKBMessage().Size() / 1000000
+	//size := recvCount * message.MakeFourKBMessage().Size() / 1000000
 	//size := recvCount * message.MakeOneMBMessage().Size() / 1000000
 	sec := int(time.Since(startTime).Seconds())
 
@@ -62,8 +62,8 @@ func (a *API) MessageToServer(server protogo.MessageRPC_MessageToServerServer) e
 	a.wg.Wait()
 
 	//size := recvCount * message.MakeOneBMessage().Size() / 1000000
-	//size := recvCount * message.MakeOneKBMessage().Size() / 1000000
-	size := recvCount * message.MakeFourKBMessage().Size() / 1000000
+	size := recvCount * message.MakeOneKBMessage().Size() / 1000000
+	//size := recvCount * message.MakeFourKBMessage().Size() / 1000000
 	//size := recvCount * message.MakeOneMBMessage().Size() / 1000000
 	sec := int(time.Since(startTime).Seconds())
 
@@ -87,8 +87,8 @@ func (a *API) MessageToClient(server protogo.MessageRPC_MessageToClientServer) e
 	a.wg.Wait()
 
 	//size := recvCount * message.MakeOneBMessage().Size() / 1000000
-	//size := recvCount * message.MakeOneKBMessage().Size() / 1000000
-	size := recvCount * message.MakeFourKBMessage().Size() / 1000000
+	size := recvCount * message.MakeOneKBMessage().Size() / 1000000
+	//size := recvCount * message.MakeFourKBMessage().Size() / 1000000
 	//size := recvCount * message.MakeOneMBMessage().Size() / 1000000
 	sec := int(time.Since(startTime).Seconds())
 
@@ -124,7 +124,7 @@ func (a *API) msgToClientServerSendMsgRoutine(stream protogo.MessageRPC_MessageT
 	defer a.wg.Done()
 
 	Logger.Infof("stream %d start sending goroutine", index)
-	msg := message.MakeFourKBMessage()
+	msg := message.MakeOneKBMessage()
 	for i := 0; i < sendTimes; i++ {
 		err := stream.Send(msg)
 		if err != nil {
@@ -159,7 +159,7 @@ func (a *API) msgTwoDirectionServerSendMsgRoutine(stream protogo.MessageRPC_Mess
 	defer a.wg.Done()
 
 	Logger.Infof("stream %d start sending goroutine", index)
-	msg := message.MakeFourKBMessage()
+	msg := message.MakeOneKBMessage()
 	for i := 0; i < sendTimes; i++ {
 		err := stream.Send(msg)
 		if err != nil {

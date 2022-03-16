@@ -52,8 +52,8 @@ func (c *MsgClient) StartToServerClient() bool {
 	sendTimes := 10000000
 
 	//msg := message.MakeOneBMessage()
-	//msg := message.MakeOneKBMessage()
-	msg := message.MakeFourKBMessage()
+	msg := message.MakeOneKBMessage()
+	//msg := message.MakeFourKBMessage()
 	//msg := message.MakeOneMBMessage()
 	msgChan := make(chan *protogo.Message, 20000000)
 	for j := 0; j < sendTimes/1000; j++ {
@@ -95,8 +95,8 @@ func (c *MsgClient) StartToClientClient() bool {
 	sendTimes := 10000000
 
 	//msg := message.MakeOneBMessage()
-	//msg := message.MakeOneKBMessage()
-	msg := message.MakeFourKBMessage()
+	msg := message.MakeOneKBMessage()
+	//msg := message.MakeFourKBMessage()
 	//msg := message.MakeOneMBMessage()
 	c.wg.Add(1)
 	startTime := time.Now()
@@ -130,8 +130,8 @@ func (c *MsgClient) StartTwoDirectionClient() bool {
 	sendTimes := 10000000
 
 	//msg := message.MakeOneBMessage()
-	//msg := message.MakeOneKBMessage()
-	msg := message.MakeFourKBMessage()
+	msg := message.MakeOneKBMessage()
+	//msg := message.MakeFourKBMessage()
 	//msg := message.MakeOneMBMessage()
 	msgChan := make(chan *protogo.Message, 20000000)
 	for j := 0; j < sendTimes/1000; j++ {
