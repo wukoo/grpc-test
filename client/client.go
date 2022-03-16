@@ -28,10 +28,10 @@ type MsgClient struct {
 	logger *zap.SugaredLogger
 }
 
-func NewMsgClient(clientId string) *MsgClient {
+func NewMsgClient(logger *zap.SugaredLogger) *MsgClient {
 	return &MsgClient{
 		wg:     new(sync.WaitGroup),
-		logger: logger.NewLogger(clientId, "INFO"),
+		logger: logger,
 	}
 }
 
@@ -273,16 +273,19 @@ func GetMSGTwoDirectionClientStream(conn *grpc.ClientConn) (protogo.MessageRPC_M
 }
 
 func main() {
-	//clientId := "client1"
-	//client := NewMsgClient(clientId)
-	//go client.StartToServerClient()
-	//
-	//clientId2 := "client2"
-	//client2 := NewMsgClient(clientId2)
-	//go client2.StartToClientClient()
-	//time.Sleep(100000000000000)
-	//
-	clientId3 := "client3"
-	client3 := NewMsgClient(clientId3)
-	client3.StartTwoDirectionClient()
+	log := logger.NewLogger("client", "INFO")
+	//for i := 0; i < 4; i++ {
+	//	client := NewMsgClient(log)
+	//	go client.StartToClientClient()
+	//}
+	//for i := 0; i < 4; i++ {
+	//	client := NewMsgClient(log)
+	//	go client.StartToServerClient()
+	//}
+	//time.Sleep(1000000000000)
+	for i := 0; i < 1; i++ {
+		client := NewMsgClient(log)
+		go client.StartTwoDirectionClient()
+	}
+	time.Sleep(1000000000000)
 }
