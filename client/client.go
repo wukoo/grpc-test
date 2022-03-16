@@ -151,7 +151,7 @@ func (c *MsgClient) StartTwoDirectionClient() bool {
 	sec := int(time.Since(startTime).Seconds())
 
 	c.logger.Infof("finish tow direction %d messages in time: %ds, total size: %dMB, messages per sec: %d, "+
-		"speed: %dMB/s, tcpFlag: %v", sendTimes, sec, size, sendTimes/sec, size/sec, tcpFlag)
+		"speed: %dMB/s, tcpFlag: %v", sendTimes, sec, 2*size, 2*sendTimes/sec, 2*size/sec, tcpFlag)
 
 	return true
 }
@@ -283,7 +283,7 @@ func main() {
 	//	go client.StartToServerClient()
 	//}
 	//time.Sleep(1000000000000)
-	for i := 0; i < 1; i++ {
+	for i := 0; i < 4; i++ {
 		client := NewMsgClient(log)
 		go client.StartTwoDirectionClient()
 	}
