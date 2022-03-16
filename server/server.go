@@ -23,9 +23,8 @@ const (
 )
 
 type MsgServer struct {
-	Listener  net.Listener
-	Server    *grpc.Server
-	streamMap map[*API]protogo.MessageRPC_MessageChatServer
+	Listener net.Listener
+	Server   *grpc.Server
 }
 
 var Logger = logger.NewLogger("server", "INFO")
@@ -75,9 +74,8 @@ func NewMsgServer() (*MsgServer, error) {
 	server := grpc.NewServer(serverOpts...)
 
 	return &MsgServer{
-		Listener:  listener,
-		Server:    server,
-		streamMap: make(map[*API]protogo.MessageRPC_MessageChatServer),
+		Listener: listener,
+		Server:   server,
 	}, nil
 }
 

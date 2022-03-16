@@ -6,14 +6,13 @@ package protogo
 import (
 	context "context"
 	fmt "fmt"
-	io "io"
-	math "math"
-	math_bits "math/bits"
-
 	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	io "io"
+	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -28,7 +27,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Message struct {
-	Msg string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Msg string `protobuf:"bytes,1,opt,name=msg,proto3" json:"msg,omitempty"`
 }
 
 func (m *Message) Reset()         { *m = Message{} }
@@ -78,17 +77,19 @@ func init() {
 func init() { proto.RegisterFile("message.proto", fileDescriptor_33c57e4bae7b9afd) }
 
 var fileDescriptor_33c57e4bae7b9afd = []byte{
-	// 151 bytes of a gzipped FileDescriptorProto
+	// 184 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcd, 0x4d, 0x2d, 0x2e,
 	0x4e, 0x4c, 0x4f, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x05, 0x53, 0x4a, 0xd2, 0x5c,
 	0xec, 0xbe, 0x10, 0x71, 0x21, 0x01, 0x2e, 0xe6, 0xdc, 0xe2, 0x74, 0x09, 0x46, 0x05, 0x46, 0x0d,
-	0xce, 0x20, 0x10, 0xd3, 0xc8, 0x91, 0x8b, 0x0b, 0x2a, 0x19, 0x14, 0xe0, 0x2c, 0x64, 0xcc, 0xc5,
-	0x0d, 0xe5, 0x39, 0x67, 0x24, 0x96, 0x08, 0xf1, 0x41, 0x0c, 0xd2, 0x83, 0x8a, 0x49, 0xa1, 0xf1,
-	0x95, 0x18, 0x34, 0x18, 0x0d, 0x18, 0x9d, 0xf4, 0x4e, 0x3c, 0x92, 0x63, 0xbc, 0xf0, 0x48, 0x8e,
-	0xf1, 0xc1, 0x23, 0x39, 0xc6, 0x09, 0x8f, 0xe5, 0x18, 0x2e, 0x3c, 0x96, 0x63, 0xb8, 0xf1, 0x58,
-	0x8e, 0x21, 0x4a, 0x24, 0xbd, 0xa8, 0x20, 0x59, 0x37, 0x23, 0x3f, 0x37, 0x55, 0xbf, 0x20, 0x49,
-	0x1f, 0xac, 0x37, 0x3d, 0x3f, 0x89, 0x0d, 0xcc, 0x30, 0x06, 0x04, 0x00, 0x00, 0xff, 0xff, 0xcd,
-	0x20, 0x9b, 0x82, 0xae, 0x00, 0x00, 0x00,
+	0xce, 0x20, 0x10, 0xd3, 0x68, 0x37, 0x23, 0x17, 0x17, 0x54, 0x36, 0x28, 0xc0, 0x59, 0xc8, 0x9a,
+	0x4b, 0x18, 0xca, 0x0b, 0x29, 0xcf, 0x77, 0xc9, 0x2c, 0x4a, 0x4d, 0x2e, 0xc9, 0xcc, 0xcf, 0x13,
+	0xe2, 0x83, 0x98, 0xa8, 0x07, 0x95, 0x93, 0x42, 0xe3, 0x2b, 0x31, 0x68, 0x30, 0x1a, 0x30, 0x0a,
+	0x99, 0x73, 0xf1, 0xc3, 0x34, 0xe7, 0x07, 0xa7, 0x16, 0x95, 0xa5, 0x16, 0x91, 0xa1, 0xd1, 0x39,
+	0x27, 0x33, 0x35, 0xaf, 0x84, 0x38, 0x8d, 0x4e, 0x7a, 0x27, 0x1e, 0xc9, 0x31, 0x5e, 0x78, 0x24,
+	0xc7, 0xf8, 0xe0, 0x91, 0x1c, 0xe3, 0x84, 0xc7, 0x72, 0x0c, 0x17, 0x1e, 0xcb, 0x31, 0xdc, 0x78,
+	0x2c, 0xc7, 0x10, 0x25, 0x92, 0x5e, 0x54, 0x90, 0xac, 0x9b, 0x91, 0x9f, 0x9b, 0xaa, 0x5f, 0x90,
+	0xa4, 0x0f, 0xd6, 0x9b, 0x9e, 0x9f, 0xc4, 0x06, 0x66, 0x18, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff,
+	0x08, 0x11, 0xd5, 0x76, 0x29, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -103,7 +104,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MessageRPCClient interface {
-	MessageChat(ctx context.Context, opts ...grpc.CallOption) (MessageRPC_MessageChatClient, error)
+	MessageTwoDirection(ctx context.Context, opts ...grpc.CallOption) (MessageRPC_MessageTwoDirectionClient, error)
+	MessageToServer(ctx context.Context, opts ...grpc.CallOption) (MessageRPC_MessageToServerClient, error)
+	MessageToClient(ctx context.Context, opts ...grpc.CallOption) (MessageRPC_MessageToClientClient, error)
 }
 
 type messageRPCClient struct {
@@ -114,30 +117,92 @@ func NewMessageRPCClient(cc *grpc.ClientConn) MessageRPCClient {
 	return &messageRPCClient{cc}
 }
 
-func (c *messageRPCClient) MessageChat(ctx context.Context, opts ...grpc.CallOption) (MessageRPC_MessageChatClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_MessageRPC_serviceDesc.Streams[0], "/proto.MessageRPC/MessageChat", opts...)
+func (c *messageRPCClient) MessageTwoDirection(ctx context.Context, opts ...grpc.CallOption) (MessageRPC_MessageTwoDirectionClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_MessageRPC_serviceDesc.Streams[0], "/proto.MessageRPC/MessageTwoDirection", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &messageRPCMessageChatClient{stream}
+	x := &messageRPCMessageTwoDirectionClient{stream}
 	return x, nil
 }
 
-type MessageRPC_MessageChatClient interface {
+type MessageRPC_MessageTwoDirectionClient interface {
 	Send(*Message) error
 	Recv() (*Message, error)
 	grpc.ClientStream
 }
 
-type messageRPCMessageChatClient struct {
+type messageRPCMessageTwoDirectionClient struct {
 	grpc.ClientStream
 }
 
-func (x *messageRPCMessageChatClient) Send(m *Message) error {
+func (x *messageRPCMessageTwoDirectionClient) Send(m *Message) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *messageRPCMessageChatClient) Recv() (*Message, error) {
+func (x *messageRPCMessageTwoDirectionClient) Recv() (*Message, error) {
+	m := new(Message)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *messageRPCClient) MessageToServer(ctx context.Context, opts ...grpc.CallOption) (MessageRPC_MessageToServerClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_MessageRPC_serviceDesc.Streams[1], "/proto.MessageRPC/MessageToServer", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &messageRPCMessageToServerClient{stream}
+	return x, nil
+}
+
+type MessageRPC_MessageToServerClient interface {
+	Send(*Message) error
+	Recv() (*Message, error)
+	grpc.ClientStream
+}
+
+type messageRPCMessageToServerClient struct {
+	grpc.ClientStream
+}
+
+func (x *messageRPCMessageToServerClient) Send(m *Message) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *messageRPCMessageToServerClient) Recv() (*Message, error) {
+	m := new(Message)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *messageRPCClient) MessageToClient(ctx context.Context, opts ...grpc.CallOption) (MessageRPC_MessageToClientClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_MessageRPC_serviceDesc.Streams[2], "/proto.MessageRPC/MessageToClient", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &messageRPCMessageToClientClient{stream}
+	return x, nil
+}
+
+type MessageRPC_MessageToClientClient interface {
+	Send(*Message) error
+	Recv() (*Message, error)
+	grpc.ClientStream
+}
+
+type messageRPCMessageToClientClient struct {
+	grpc.ClientStream
+}
+
+func (x *messageRPCMessageToClientClient) Send(m *Message) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *messageRPCMessageToClientClient) Recv() (*Message, error) {
 	m := new(Message)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -147,40 +212,100 @@ func (x *messageRPCMessageChatClient) Recv() (*Message, error) {
 
 // MessageRPCServer is the server API for MessageRPC service.
 type MessageRPCServer interface {
-	MessageChat(MessageRPC_MessageChatServer) error
+	MessageTwoDirection(MessageRPC_MessageTwoDirectionServer) error
+	MessageToServer(MessageRPC_MessageToServerServer) error
+	MessageToClient(MessageRPC_MessageToClientServer) error
 }
 
 // UnimplementedMessageRPCServer can be embedded to have forward compatible implementations.
 type UnimplementedMessageRPCServer struct {
 }
 
-func (*UnimplementedMessageRPCServer) MessageChat(srv MessageRPC_MessageChatServer) error {
-	return status.Errorf(codes.Unimplemented, "method MessageChat not implemented")
+func (*UnimplementedMessageRPCServer) MessageTwoDirection(srv MessageRPC_MessageTwoDirectionServer) error {
+	return status.Errorf(codes.Unimplemented, "method MessageTwoDirection not implemented")
+}
+func (*UnimplementedMessageRPCServer) MessageToServer(srv MessageRPC_MessageToServerServer) error {
+	return status.Errorf(codes.Unimplemented, "method MessageToServer not implemented")
+}
+func (*UnimplementedMessageRPCServer) MessageToClient(srv MessageRPC_MessageToClientServer) error {
+	return status.Errorf(codes.Unimplemented, "method MessageToClient not implemented")
 }
 
 func RegisterMessageRPCServer(s *grpc.Server, srv MessageRPCServer) {
 	s.RegisterService(&_MessageRPC_serviceDesc, srv)
 }
 
-func _MessageRPC_MessageChat_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MessageRPCServer).MessageChat(&messageRPCMessageChatServer{stream})
+func _MessageRPC_MessageTwoDirection_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MessageRPCServer).MessageTwoDirection(&messageRPCMessageTwoDirectionServer{stream})
 }
 
-type MessageRPC_MessageChatServer interface {
+type MessageRPC_MessageTwoDirectionServer interface {
 	Send(*Message) error
 	Recv() (*Message, error)
 	grpc.ServerStream
 }
 
-type messageRPCMessageChatServer struct {
+type messageRPCMessageTwoDirectionServer struct {
 	grpc.ServerStream
 }
 
-func (x *messageRPCMessageChatServer) Send(m *Message) error {
+func (x *messageRPCMessageTwoDirectionServer) Send(m *Message) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *messageRPCMessageChatServer) Recv() (*Message, error) {
+func (x *messageRPCMessageTwoDirectionServer) Recv() (*Message, error) {
+	m := new(Message)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _MessageRPC_MessageToServer_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MessageRPCServer).MessageToServer(&messageRPCMessageToServerServer{stream})
+}
+
+type MessageRPC_MessageToServerServer interface {
+	Send(*Message) error
+	Recv() (*Message, error)
+	grpc.ServerStream
+}
+
+type messageRPCMessageToServerServer struct {
+	grpc.ServerStream
+}
+
+func (x *messageRPCMessageToServerServer) Send(m *Message) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *messageRPCMessageToServerServer) Recv() (*Message, error) {
+	m := new(Message)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _MessageRPC_MessageToClient_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MessageRPCServer).MessageToClient(&messageRPCMessageToClientServer{stream})
+}
+
+type MessageRPC_MessageToClientServer interface {
+	Send(*Message) error
+	Recv() (*Message, error)
+	grpc.ServerStream
+}
+
+type messageRPCMessageToClientServer struct {
+	grpc.ServerStream
+}
+
+func (x *messageRPCMessageToClientServer) Send(m *Message) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *messageRPCMessageToClientServer) Recv() (*Message, error) {
 	m := new(Message)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -194,8 +319,20 @@ var _MessageRPC_serviceDesc = grpc.ServiceDesc{
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "MessageChat",
-			Handler:       _MessageRPC_MessageChat_Handler,
+			StreamName:    "MessageTwoDirection",
+			Handler:       _MessageRPC_MessageTwoDirection_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "MessageToServer",
+			Handler:       _MessageRPC_MessageToServer_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "MessageToClient",
+			Handler:       _MessageRPC_MessageToClient_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
