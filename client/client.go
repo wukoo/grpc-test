@@ -220,7 +220,7 @@ func (c *MsgClient) twoDirectionClientRecvMsgRoutine(stream protogo.MessageRPC_M
 	size := recvTimes * msg1.Size() / 1000000
 	defer func() {
 		sec := int(time.Since(startTime).Seconds())
-		c.logger.Infof("finish tow direction sending %d messages in time: %ds, total size: %dMB, messages per sec: %d, "+
+		c.logger.Infof("finish tow direction received %d messages in time: %ds, total size: %dMB, messages per sec: %d, "+
 			"speed: %dMB/s, tcpFlag: %v", recvTimes, sec, size, recvTimes/sec, size/sec, tcpFlag)
 		c.wg.Done()
 	}()
