@@ -142,16 +142,9 @@ func (c *MsgClient) StartTwoDirectionClient() bool {
 		}()
 	}
 	c.wg.Add(2)
-	startTime := time.Now()
 	go c.twoDirectionClientSendMsgRoutine(stream, sendTimes, msgChan)
 	go c.twoDirectionClientRecvMsgRoutine(stream, sendTimes)
 	c.wg.Wait()
-
-	size := sendTimes * msg.Size() / 1000000
-	sec := int(time.Since(startTime).Seconds())
-
-	c.logger.Infof("finish tow direction %d messages in time: %ds, total size: %dMB, messages per sec: %d, "+
-		"speed: %dMB/s, tcpFlag: %v", sendTimes, sec, 2*size, 2*sendTimes/sec, 2*size/sec, tcpFlag)
 
 	return true
 }
@@ -160,6 +153,7 @@ func (c *MsgClient) toServerClientSendMsgRoutine(stream protogo.MessageRPC_Messa
 	msgChan chan *protogo.Message) {
 	defer c.wg.Done()
 
+	//msg1 := message.MakeOneKBMessage()
 	c.logger.Infof("start sending goroutine")
 
 	for i := 0; i < sendTimes; i++ {
@@ -195,7 +189,13 @@ func (c *MsgClient) toClientClientRecvMsgRoutine(stream protogo.MessageRPC_Messa
 
 func (c *MsgClient) twoDirectionClientSendMsgRoutine(stream protogo.MessageRPC_MessageTwoDirectionClient, sendTimes int,
 	msgChan chan *protogo.Message) {
+	startTime := time.Now()
+	msg := message.MakeOneKBMessage()
+	size := sendTimes * msg.Size() / 1000000
 	defer func() {
+		sec := int(time.Since(startTime).Seconds())
+		c.logger.Infof("finish tow direction sending %d messages in time: %ds, total size: %dMB, messages per sec: %d, "+
+			"speed: %dMB/s, tcpFlag: %v", sendTimes, sec, size, sendTimes/sec, size/sec, tcpFlag)
 		c.wg.Done()
 	}()
 
@@ -215,7 +215,15 @@ func (c *MsgClient) twoDirectionClientSendMsgRoutine(stream protogo.MessageRPC_M
 }
 
 func (c *MsgClient) twoDirectionClientRecvMsgRoutine(stream protogo.MessageRPC_MessageTwoDirectionClient, recvTimes int) {
-	defer c.wg.Done()
+	startTime := time.Now()
+	msg1 := message.MakeOneKBMessage()
+	size := recvTimes * msg1.Size() / 1000000
+	defer func() {
+		sec := int(time.Since(startTime).Seconds())
+		c.logger.Infof("finish tow direction sending %d messages in time: %ds, total size: %dMB, messages per sec: %d, "+
+			"speed: %dMB/s, tcpFlag: %v", recvTimes, sec, size, recvTimes/sec, size/sec, tcpFlag)
+		c.wg.Done()
+	}()
 	c.logger.Infof("start receiving client message ")
 	for i := 0; i < recvTimes; i++ {
 		_, revErr := stream.Recv()
@@ -274,15 +282,15 @@ func GetMSGTwoDirectionClientStream(conn *grpc.ClientConn) (protogo.MessageRPC_M
 
 func main() {
 	log := logger.NewLogger("client", "INFO")
-	//for i := 0; i < 4; i++ {
-	//	client := NewMsgClient(log)
-	//	go client.StartToClientClient()
-	//}
-	//for i := 0; i < 4; i++ {
-	//	client := NewMsgClient(log)
-	//	go client.StartToServerClient()
-	//}
-	//time.Sleep(1000000000000)
+	for i := 0; i < 4; i++ {
+		client := NewMsgClient(log)
+		go client.StartToClientClient()
+	}
+	for i := 0; i < 4; i++ {
+		client := NewMsgClient(log)
+		go client.StartToServerClient()
+	}
+	time.Sleep(1000000000000)
 	for i := 0; i < 4; i++ {
 		client := NewMsgClient(log)
 		go client.StartTwoDirectionClient()
