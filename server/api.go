@@ -32,7 +32,7 @@ func (a *API) MessageTwoDirection(server protogo.MessageRPC_MessageTwoDirectionS
 	startTime := time.Now()
 
 	go a.msgTwoDirectionServerRecvMsgRoutine(server, index, &recvCount)
-	go a.msgTwoDirectionServerSendMsgRoutine(server, index, sendTimes)
+	// go a.msgTwoDirectionServerSendMsgRoutine(server, index, sendTimes)
 
 	a.wg.Wait()
 
@@ -140,7 +140,7 @@ func (a *API) msgTwoDirectionServerRecvMsgRoutine(stream protogo.MessageRPC_Mess
 
 	Logger.Infof("stream %d start receiving cdm message", index)
 	for {
-		_, revErr := stream.Recv()
+		msg, revErr := stream.Recv()
 		if revErr == io.EOF {
 			Logger.Infof("stream %d receive eof and exit receive goroutine", index)
 			return
@@ -150,6 +150,12 @@ func (a *API) msgTwoDirectionServerRecvMsgRoutine(stream protogo.MessageRPC_Mess
 			Logger.Infof("stream %d receive err and exit receive goroutine, error: %s", index, revErr)
 			return
 		}
+
+		go func() {
+			// Logger.Infof("msg txid: %s", msg.TxId)
+			stream.Send(msg)
+		}()
+
 		*count++
 	}
 }

@@ -14,7 +14,7 @@ import (
 
 const (
 	port        = "16666"
-	tcpFlag     = true
+	tcpFlag     = false
 	MinInterval = time.Duration(1) * time.Minute
 	// ConnectionTimeout connection timeout time
 	ConnectionTimeout = 5 * time.Second

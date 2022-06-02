@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"grpc-test/logger"
 	"grpc-test/message"
@@ -18,21 +19,58 @@ import (
 
 const (
 	port        = "16666"
-	tcpFlag     = true
+	tcpFlag     = false
 	MaxSendSize = 10
 	MaxRevSize  = 10
 )
 
 type MsgClient struct {
-	wg     *sync.WaitGroup
-	logger *zap.SugaredLogger
+	wg           *sync.WaitGroup
+	logger       *zap.SugaredLogger
+	receiveChMap map[string]chan *protogo.Message
+	chMapLock    sync.RWMutex
 }
 
 func NewMsgClient(logger *zap.SugaredLogger) *MsgClient {
 	return &MsgClient{
-		wg:     new(sync.WaitGroup),
-		logger: logger,
+		wg:           new(sync.WaitGroup),
+		logger:       logger,
+		receiveChMap: make(map[string]chan *protogo.Message),
 	}
+}
+
+func (c *MsgClient) RegisterCh(key string, receiveCh chan *protogo.Message) error {
+	c.chMapLock.Lock()
+	defer c.chMapLock.Unlock()
+
+	_, ok := c.receiveChMap[key]
+	if ok {
+		c.logger.Errorf("[%s] fail to register receive chan cause chan already registered", key)
+		return errors.New("duplicate err")
+	}
+
+	c.receiveChMap[key] = receiveCh
+	return nil
+}
+
+func (c *MsgClient) GetReceiveChan(key string) chan *protogo.Message {
+	c.chMapLock.RLock()
+	defer c.chMapLock.RUnlock()
+	// c.logger.Debugf("get receive chan for [%s]", key)
+	return c.receiveChMap[key]
+}
+
+func (c *MsgClient) GetAndDeleteReceiveChan(key string) chan *protogo.Message {
+	c.chMapLock.Lock()
+	defer c.chMapLock.Unlock()
+	// c.logger.Infof("get receive chan for [%s] and delete", key)
+	receiveChan, ok := c.receiveChMap[key]
+	if ok {
+		delete(c.receiveChMap, key)
+		return receiveChan
+	}
+	c.logger.Warnf("cannot find receive chan for [%s] and return nil", key)
+	return nil
 }
 
 func (c *MsgClient) StartToServerClient() bool {
@@ -127,20 +165,27 @@ func (c *MsgClient) StartTwoDirectionClient() bool {
 		return false
 	}
 
-	sendTimes := 10000000
+	sendTimes := 1_000_000
 
 	//msg := message.MakeOneBMessage()
-	msg := message.MakeOneKBMessage()
+	// msg := message.MakeOneKBMessage()
 	//msg := message.MakeFourKBMessage()
 	//msg := message.MakeOneMBMessage()
-	msgChan := make(chan *protogo.Message, 20000000)
+	msgChan := make(chan *protogo.Message, 200000000)
 	for j := 0; j < sendTimes/1000; j++ {
-		go func() {
+		c.wg.Add(1)
+		go func(base int) {
 			for i := 0; i < 1000; i++ {
-				msgChan <- msg
+				msg1 := message.MakeOneKBMessage()
+				// c.logger.Infof("%d", j*1000+i)
+				msg1.TxId = fmt.Sprintf("%d", base*1000+i)
+				msgChan <- msg1
 			}
-		}()
+			c.wg.Done()
+		}(j)
 	}
+	c.wg.Wait()
+	c.logger.Info("prepare data complete.")
 	c.wg.Add(2)
 	go c.twoDirectionClientSendMsgRoutine(stream, sendTimes, msgChan)
 	go c.twoDirectionClientRecvMsgRoutine(stream, sendTimes)
@@ -193,9 +238,9 @@ func (c *MsgClient) twoDirectionClientSendMsgRoutine(stream protogo.MessageRPC_M
 	msg := message.MakeOneKBMessage()
 	size := sendTimes * msg.Size() / 1000000
 	defer func() {
-		sec := int(time.Since(startTime).Seconds())
+		msec := int(time.Since(startTime).Milliseconds())
 		c.logger.Infof("finish tow direction sending %d messages in time: %ds, total size: %dMB, messages per sec: %d, "+
-			"speed: %dMB/s, tcpFlag: %v", sendTimes, sec, size, sendTimes/sec, size/sec, tcpFlag)
+			"speed: %dMB/s, tcpFlag: %v", sendTimes, msec, size, sendTimes/(msec/1000), size/(msec/1000), tcpFlag)
 		c.wg.Done()
 	}()
 
@@ -203,13 +248,25 @@ func (c *MsgClient) twoDirectionClientSendMsgRoutine(stream protogo.MessageRPC_M
 
 	for i := 0; i < sendTimes; i++ {
 		msg1 := <-msgChan
-		err := stream.Send(msg1)
-		if i%5000000 == 0 {
-			fmt.Printf("msg chan len:%d\n", len(msgChan))
+
+		// register result chan
+		responseCh := make(chan *protogo.Message, 1)
+		// c.logger.Info("register key: ", msg1.TxId)
+		err := c.RegisterCh(msg1.TxId, responseCh)
+		if err != nil {
+			c.logger.Error(err)
+			return
 		}
+		err = stream.Send(msg1)
 		if err != nil {
 			c.logger.Errorf("fail to send one: %s", err)
 			return
+		}
+
+		<-responseCh
+
+		if i%50000 == 0 {
+			fmt.Printf("msg chan len:%d\n", len(msgChan))
 		}
 	}
 }
@@ -226,7 +283,7 @@ func (c *MsgClient) twoDirectionClientRecvMsgRoutine(stream protogo.MessageRPC_M
 	}()
 	c.logger.Infof("start receiving client message ")
 	for i := 0; i < recvTimes; i++ {
-		_, revErr := stream.Recv()
+		msg, revErr := stream.Recv()
 		if revErr == io.EOF {
 			c.logger.Errorf("client receive eof and exit receive goroutine")
 			return
@@ -236,6 +293,14 @@ func (c *MsgClient) twoDirectionClientRecvMsgRoutine(stream protogo.MessageRPC_M
 			c.logger.Errorf("client receive err and exit receive goroutine %s", revErr)
 			return
 		}
+
+		waitCh := c.GetAndDeleteReceiveChan(msg.TxId)
+		if waitCh == nil {
+			c.logger.Warnf("client fail to retrieve [%s] response chan, response chan is nil",
+				msg.TxId)
+			continue
+		}
+		waitCh <- msg
 	}
 }
 
@@ -282,18 +347,18 @@ func GetMSGTwoDirectionClientStream(conn *grpc.ClientConn) (protogo.MessageRPC_M
 
 func main() {
 	log := logger.NewLogger("client", "INFO")
-	for i := 0; i < 4; i++ {
-		client := NewMsgClient(log)
-		go client.StartToClientClient()
-	}
-	for i := 0; i < 4; i++ {
-		client := NewMsgClient(log)
-		go client.StartToServerClient()
-	}
-	time.Sleep(1000000000000)
-	for i := 0; i < 4; i++ {
-		client := NewMsgClient(log)
-		go client.StartTwoDirectionClient()
-	}
+	// for i := 0; i < 4; i++ {
+	// 	client := NewMsgClient(log)
+	// 	go client.StartToClientClient()
+	// }
+	// for i := 0; i < 4; i++ {
+	// 	client := NewMsgClient(log)
+	// 	go client.StartToServerClient()
+	// }
+	// time.Sleep(1000000000000)
+	// for i := 0; i < 4; i++ {
+	client := NewMsgClient(log)
+	go client.StartTwoDirectionClient()
+	// }
 	time.Sleep(1000000000000)
 }
